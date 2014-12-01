@@ -8,14 +8,28 @@ namespace GiftAidCalculator.Model
 {
     public class GiftAidCalculator
     {
-        public decimal CalculateGiftAidAmount(decimal donationAmount, decimal taxRate)
+        private readonly ITaxRepository _taxRepository;
+
+        public GiftAidCalculator(ITaxRepository taxRepository)
         {
-            if (taxRate <= 0m || taxRate >= 100m) throw new ArgumentOutOfRangeException("taxRate");
+            _taxRepository = taxRepository;
+        }
+
+        public decimal CalculateGiftAidAmount(decimal donationAmount, EventSupplement selectedEventSupplement)
+        {
             if (donationAmount <= 0m) throw new ArgumentOutOfRangeException("donationAmount");
-          
-            var gaRatio = taxRate / (100 - taxRate);
-            var giftAidAmount = donationAmount*gaRatio;
-            return CalculationHelper.RoundDecimal(giftAidAmount,2);
+
+            var currentTaxRate = _taxRepository.RetrieveTaxRate();
+
+            var supplementAmount = this.CalculateSupplementedAmount(donationAmount, selectedEventSupplement);
+            var gaRatio = currentTaxRate / (100 - currentTaxRate);
+            var giftAidAmount = supplementAmount * gaRatio;
+            return CalculationHelper.RoundDecimal(giftAidAmount, 2);
+        }
+
+        private decimal CalculateSupplementedAmount(decimal donationAmount, EventSupplement selectedEvent)
+        {
+            return donationAmount + donationAmount * selectedEvent.SupplementRate / 100m;
         }
     }
 }

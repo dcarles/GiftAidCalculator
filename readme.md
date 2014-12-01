@@ -58,6 +58,3 @@ So that **people will feel inspired to donate to these event types**
 - No supplement should be applied for other events.
 
 ---
-
-Thanks for your time, we look forward to hearing from you!
-- The [JG Hackers](http://twitter.com/jghackers)
